@@ -1,0 +1,71 @@
+(C) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+Попробуйте новую кроссплатформенную оболочку PowerShell (https://aka.ms/pscore6)   
+PS C:\Users\Spikeboy\Desktop\D\! MyDocuments\Skillfactory\NewsPortal> 
+PS C:\Users\Spikeboy\Desktop\D\! MyDocuments\Skillfactory\NewsPortal>  venv\scripts
+\activate
+(venv) PS C:\Users\Spikeboy\Desktop\D\! MyDocuments\Skillfactory\NewsPortal> cd .\N
+ewsPortal\
+(venv) PS C:\Users\Spikeboy\Desktop\D\! MyDocuments\Skillfactory\NewsPortal\NewsPor
+tal> python .\manage.py makemigrations
+Migrations for 'news':
+  news\migrations\0001_initial.py
+>>> from django.contrib.auth.models import User
+>>> user1 = User.objects.create_user('user1', password='password1')
+>>> user2 = User.objects.create_user('user2', password='password2')
+>>> from news.models import Author
+>>> author1 = Author.objects.create(user=user1)
+>>> author2 = Author.objects.create(user=user2)
+>>> from news.models import Category
+>>> category1 = Category.objects.create(name='Sports')
+>>> category2 = Category.objects.create(name='Politics')
+>>> category3 = Category.objects.create(name='Education')
+>>> category4 = Category.objects.create(name='Health')
+>>> from news.models import Post
+>>> post1 = Post.objects.create(author=author1, type='article', title='Article 1', 
+text='This is the content of ARTICLE 1')
+>>> post2 = Post.objects.create(author=author2, type='news', title='News 1', text='
+This is the content of NEWS 1')
+>>> post3 = Post.objects.create(author=author1, type='article', title='Article 2', 
+text='This is the content of ARTICLE 2')
+>>> from news.models import PostCategory
+>>> PostCategory.objects.create(post=post1, category=category1)
+<PostCategory: PostCategory object (1)>
+>>>
+>>> PostCategory.objects.create(post=post1, category=category2)
+<PostCategory: PostCategory object (2)>
+>>> PostCategory.objects.create(post=post2, category=category3)
+<PostCategory: PostCategory object (3)>
+>>> PostCategory.objects.create(post=post3, category=category4)
+<PostCategory: PostCategory object (4)>
+>>> from news.models import Comment
+>>> comment1 = Comment.objects.create(post=post1, user=user1, text='Great article!'
+)
+>>> comment2 = Comment.objects.create(post=post1, user=user2, text='Interesting poi
+nts!')
+>>> comment3 = Comment.objects.create(post=post2, user=user1, text='Nice news!')
+>>> comment4 = Comment.objects.create(post=post3, user=user2, text='Good article!' )            
+
+>>> post2.dislike() 
+>>> post1.like() 
+>>> comment1.like() 
+>>> comment4.dislike() 
+>>> author1.update_rating()
+>>> author2.update_rating() 
+>>> best_user = Author.objects.order_by('-rating').first()
+>>> print(best_user)
+Author object (1)
+>>> print(best_user.user.username, best_user.rating)
+user1 4
+>>> best_post = Post.objects.order_by('-rating').first()
+>>> print(best_post.time_in, best_post.author.user.username, best_post.rating, best
+_post.title, best_post.preview())
+2025-12-18 12:20:51.699271+00:00 user1 1 Article 1 This is the content of ARTICLE 1
+...
+>>> for comment in best_post.comments.all():                                    
+...     print(comment.time_in, comment.user.username, comment.rating, comment.text)
+
+... 
+2025-12-18 12:21:58.235453+00:00 user1 1 Great article!
+2025-12-18 12:22:03.787757+00:00 user2 0 Interesting points!
+>>>
