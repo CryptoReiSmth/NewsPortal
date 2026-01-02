@@ -24,6 +24,9 @@ class Author(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=64, default='No category', unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
     news = 'N'
@@ -47,6 +50,9 @@ class Post(models.Model):
 
     def preview(self):
         return self.text[:124] + '...'
+
+    def __str__(self):
+        return self.title
 
 
 class PostCategory(models.Model):

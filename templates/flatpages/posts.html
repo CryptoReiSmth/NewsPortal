@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+<!-- Название у нас будет products -->
+{% block title %}
+Posts
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все товары -->
+{% block content %}
+<h1>Все новости</h1>
+   {% for post in posts %}
+       <div>
+           <h2>{{ post.title }}</h2>
+           <p>{{ post.time_in|date:'d.m.Y' }}</p>
+           <p>{{ post.text|truncatechars:100 }}</p>
+       </div>
+   {% endfor %}
+{% endblock content %}
+
