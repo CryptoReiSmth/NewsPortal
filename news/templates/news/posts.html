@@ -1,0 +1,26 @@
+{% extends 'default.html' %}
+{% load custom_filters %}
+
+{% block title %} Все новости {% endblock %}
+
+{% block content %}
+    <hr>1
+    {% if posts %}
+        <table>
+            <tr>
+                <td>Заголовок</td>
+                <td>Дата публикации</td>
+                <td>Превью текста</td>
+            </tr>
+            {% for post in posts %}
+            <tr>
+                <td><a href="{% url 'post_detail' post.id %}">{{ post.title|censor }}</a></td>
+                <td>{{ post.time_in|date:'d.m.Y' }}</td>
+                <td>{{ post.text|truncatechars:20|censor }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+{% endblock %}
