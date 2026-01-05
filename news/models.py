@@ -20,6 +20,9 @@ class Author(models.Model):
         self.rating = posts_rating + user_comments_rating + post_comments_rating
         self.save(update_fields=['rating'])
 
+    def __str__(self):
+        return self.user.username
+
 
 class Category(models.Model):
     name = models.CharField(max_length=64, default='No category', unique=True)

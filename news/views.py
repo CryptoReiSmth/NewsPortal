@@ -10,13 +10,12 @@ class PostList(ListView):
     ordering = '-time_in'
     template_name = 'news/posts.html'
     context_object_name = 'posts'
-    paginate_by = 10
+    paginate_by = 1
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        self.filterset = PostFilter(self.request.GET, queryset)
+        self.filterset = PostFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

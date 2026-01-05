@@ -2,10 +2,10 @@
 {% load custom_filters %}
 {% load custom_tags %}
 
-{% block title %} Поиск {% endblock %}
+{% block title %} Все новости {% endblock %}
 
 {% block content %}
-    <h2> Поиск </h2>
+    <h2> Все новости </h2>
 
 
 
@@ -21,12 +21,14 @@
                 <td>Заголовок</td>
                 <td>Дата публикации</td>
                 <td>Превью текста</td>
+                <td>Автор</td>
             </tr>
             {% for post in posts %}
             <tr>
                 <td><a href="{% url 'post_detail' post.id %}">{{ post.title|censor }}</a></td>
                 <td>{{ post.time_in|date:'d.m.Y' }}</td>
                 <td>{{ post.text|truncatechars:20|censor }}</td>
+                <td> {{post.author}}</td>
             </tr>
             {% endfor %}
         </table>
