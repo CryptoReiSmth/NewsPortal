@@ -1,0 +1,16 @@
+{% extends 'default.html' %}
+{% load custom_filters %}
+{% load custom_tags %}
+{% block title %} Создать пост {% endblock %}
+
+{% block content %}
+    <h2> Создание поста </h2>
+   <form action="" method="post">
+       {% csrf_token %}
+       {{ form.as_p }}
+       <input type="submit" value="Создать" />
+   </form>
+
+
+
+{% endblock%}

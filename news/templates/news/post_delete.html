@@ -1,0 +1,13 @@
+{% extends 'default.html' %}
+
+{% block content %}
+<h2>Удаление</h2>
+<p>Вы удаляете запись: {{ post.title }}</p>
+<p><i>Дата публикации: {{ post.time_in|date:'d.m.Y' }}</i></p>
+<hr>
+<p>{{ post.text }}</p>
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Удалить" />
+</form>
+{% endblock content %}
