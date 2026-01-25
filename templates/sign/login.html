@@ -1,0 +1,14 @@
+{% extends 'default.html' %}
+{% block title %} Вход {% endblock %}
+
+{% block content %}
+    <h2> Вход в систему </h2>
+   <form action="" method="post">
+       {% csrf_token %}
+       {{ form.as_p }}
+       <input type="submit" value="Войти" />
+   </form>
+
+
+
+{% endblock%}

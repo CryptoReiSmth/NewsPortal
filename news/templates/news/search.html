@@ -15,7 +15,7 @@
    </form>
 
     <hr>
-    {% if posts %}
+    {% if news %}
         <table>
             <tr>
                 <td>Заголовок</td>
@@ -23,7 +23,7 @@
                 <td>Превью текста</td>
                 <td>Автор</td>
             </tr>
-            {% for post in posts %}
+            {% for post in news %}
             <tr>
                 <td><a href="{% url 'post_detail' post.id %}">{{ post.title|censor }}</a></td>
                 <td>{{ post.time_in|date:'d.m.Y' }}</td>
