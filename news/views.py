@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -11,7 +12,7 @@ class PostList(ListView):
     ordering = '-time_in'
     template_name = 'news/posts.html'
     context_object_name = 'posts'
-    paginate_by = 1
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -49,10 +50,11 @@ class PostSearch(ListView):
         return context
 
 
-class NewsCreate(CreateView):
+class NewsCreate(PermissionRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'news/post_create.html'
+    permission_required = 'news.add_post'
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -60,7 +62,7 @@ class NewsCreate(CreateView):
         return super().form_valid(form)
 
 
-class NewsUpdate(UpdateView):
+class NewsUpdate(PermissionRequiredMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'news/post_edit.html'
@@ -72,10 +74,11 @@ class NewsDelete(DeleteView):
     success_url = reverse_lazy('post_list')
 
 
-class ArticleCreate(CreateView):
+class ArticleCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'news/post_create.html'
+    permission_required = 'news.add_post'
 
     def form_valid(self, form):
         post = form.save(commit=False)

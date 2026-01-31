@@ -1,8 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+
+from news.models import Author
 from .forms import SignUpForm
 from .utils import get_group
 
@@ -34,9 +37,14 @@ def user_profile(request):
 
 @login_required
 def author_group(request):
+    Author.objects.get_or_create(user=request.user)
     group_author = get_group('authors')
+
     if not request.user.groups.filter(name='authors').exists():
         request.user.groups.add(group_author)
+
+    list(messages.get_messages(request))
+    messages.success(request, 'Вы успешно стали автором.\n')
     return redirect(request.META.get('HTTP_REFERER'))
 
 

@@ -11,7 +11,12 @@
         <h3 class="text-danger">{{ user.username }}</h3>
         {% if not is_author %}
         <a href="{% url 'author_group' %}" class="btn btn-outline-primary mt-2">Стать автором</a>
+        {% else %}
+        <br>
+        <a href="{% url 'news_create' %}" class="btn btn-outline-primary mt-2">Создать новость</a>
+        <a href="{% url 'article_create' %}" class="btn btn-outline-primary mt-2">Создать статью</a>
         {% endif %}
+        <br>
         <a href="{% url 'account_logout' %}" class="btn btn-outline-danger mt-2">Выйти</a>
     </div>
 </div>
