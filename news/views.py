@@ -1,9 +1,10 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .filters import PostFilter
-from .models import Post
+from .models import Post, Category
 from .forms import PostForm
 
 
@@ -84,3 +85,23 @@ class ArticleCreate(PermissionRequiredMixin, CreateView):
         post = form.save(commit=False)
         post.categoryType = 'A'
         return super().form_valid(form)
+
+
+class CategoryList(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = 'news/category_list.html'
+    context_object_name = 'categories'
+
+
+@login_required
+def subscribe(request, pk):
+    category = Category.objects.get(pk=pk)
+    category.subscribers.add(request.user)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+@login_required
+def unsubscribe(request, pk):
+    category = Category.objects.get(pk=pk)
+    category.subscribers.remove(request.user)
+    return redirect(request.META.get('HTTP_REFERER'))
