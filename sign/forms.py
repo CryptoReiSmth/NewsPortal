@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 from allauth.account.forms import SignupForm
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
+from django.core.mail import send_mail
 
 
 class SignUpForm(UserCreationForm):
@@ -39,4 +42,16 @@ class MyCustomSignUpForm(SignupForm):
         user = super(MyCustomSignUpForm, self).save(request)
         basic_group = Group.objects.get(name='common')
         basic_group.user_set.add(user)
+        html_content = (
+            f'<p>Привет, {user.username}!</p>'
+            '<p> Вы успешно зарегистрированы на '
+            f'<a href="{settings.SITE_URL}"> Новостном портале </a></p>'
+        )
+        send_mail(
+            subject='Регистрация',
+            message='Вы успешно зарегистрированы на Новостном портале.',
+            html_message=html_content,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+        )
         return user

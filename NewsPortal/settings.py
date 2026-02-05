@@ -152,7 +152,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 ACCOUNT_SIGNUP_FIELDS = ['username*', 'email*', 'password1*', 'password2*']
-ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 
@@ -174,3 +173,21 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 ACCOUNT_FORMS = {'signup':  'sign.forms.MyCustomSignUpForm'}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'xxxmatanalxxx'
+EMAIL_HOST_PASSWORD = 'ckmrqczqvwgtanss'
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'xxxmatanalxxx@yandex.ru'
+
+SITE_URL = 'http://127.0.0.1:8000'
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+DEFAULT_CHARSET = 'utf-8'
