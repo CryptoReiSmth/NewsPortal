@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'django_filters',
     'sign',
-
+    'django_apscheduler',
 
 ]
 
@@ -191,3 +191,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 DEFAULT_CHARSET = 'utf-8'
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
