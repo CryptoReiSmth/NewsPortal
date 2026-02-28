@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <body>
+    <h2>Привет, {{ user.username }}!</h2>
+    <p> Новые статьи за неделю ({{ date_from }} — {{ date_to }}): </p>
+
+    {% if posts %}
+      <ul>
+        {% for post in posts %}
+          <li>
+            <a href="{{ site_url }}/{{ post.pk }}"> {{ post.title }} </a>
+            ({{ post.time_in|date:"d.m.Y H:i" }})
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p> За эту неделю новых публикаций в ваших категориях не было. </p>
+    {% endif %}
+  </body>
+</html>
