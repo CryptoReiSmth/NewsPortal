@@ -6,28 +6,35 @@ from django.db.models.signals import m2m_changed
 from django.template.loader import render_to_string
 
 from .models import Category, PostCategory
+from .tasks import subscribers_notification_task
 
 
 @receiver(m2m_changed, sender=Category.subscribers.through)
 def subscribers_notification(sender, instance, action, pk_set, **kwargs):
+    user = User.objects.get(pk__in=pk_set)
+    username = user.username
+    email = user.email
+    name = instance.name
+
     if action == 'post_add':
-        user = User.objects.get(pk__in=pk_set)
-        send_mail(
-            subject='Новая подписка',
-            message=f'Привет, {user.username}! Вы подписались на категорию {instance.name}! \
-            \nСписок ваших подписок: {", ".join(cat.name for cat in user.categories.all())}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-        )
-    elif action == 'post_remove':
-        user = User.objects.get(pk__in=pk_set)
-        send_mail(
-            subject='Отписка',
-            message=f'Привет, {user.username}! Вы отписались от категории {instance.name}! \
-            \nСписок ваших подписок: {", ".join(cat.name for cat in user.categories.all())}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-        )
+        params = {
+            'subject': 'Новая подписка',
+            'message': f'Привет, {username}! Вы подписались категорию {name}! '
+                       f'Список категорий ваших подписок: {", ".join(cat.name for cat in user.categories.all())}',
+            'from_email': settings.DEFAULT_FROM_EMAIL,
+            'recipient_list': [email]
+        }
+        subscribers_notification_task.delay(**params)
+
+    if action == 'post_remove':
+        params = {
+            'subject': 'Отписка от категории',
+            'message': f'Привет, {username}! Вы отписались от категории {name}! '
+                       f'Список категорий ваших подписок: {", ".join(cat.name for cat in user.categories.all())}',
+            'from_email': settings.DEFAULT_FROM_EMAIL,
+            'recipient_list': [email]
+        }
+        subscribers_notification_task.delay(**params)
 
 
 def send_notifications(preview, pk, title, subscribers):
