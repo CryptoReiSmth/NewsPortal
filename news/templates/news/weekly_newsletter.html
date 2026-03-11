@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Еженедельная рассылка</title>
+</head>
+<body>
+    <h2>Здравствуйте, {{ user.username }}!</h2>
+    <p>За последнюю неделю появились новые публикации в ваших подписках:</p>
+
+    <ul>
+        {% for post in posts %}
+            <li style="margin-bottom: 20px;">
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.preview }}</p>
+                <p> <a href="{{ site_url }}{{ post.get_absolute_url }}">Читать полностью</a> </p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

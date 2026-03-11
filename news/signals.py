@@ -1,12 +1,11 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import send_mail, EmailMultiAlternatives
 from django.dispatch import receiver
 from django.db.models.signals import m2m_changed
 from django.template.loader import render_to_string
 
-from .models import Category, PostCategory
-from .tasks import subscribers_notification_task
+from .models import Category, Post
+from .tasks import subscribers_notification_task, new_post_notification_task
 
 
 @receiver(m2m_changed, sender=Category.subscribers.through)
@@ -36,36 +35,41 @@ def subscribers_notification(sender, instance, action, pk_set, **kwargs):
         }
         subscribers_notification_task.delay(**params)
 
+@receiver(m2m_changed, sender=Category.subscribers.through)
+def subscribers_notification(sender, instance, action, pk_set, **kwargs):
+    if action in ('post_add', 'post_remove') and pk_set:
+        for user_pk in pk_set:
+            subscribers_notification_task.delay(user_pk, instance.pk, action)
 
-def send_notifications(preview, pk, title, subscribers):
+
+@receiver(m2m_changed, sender=Post.categories.through)
+def notify_about_new_post(sender, instance, action, **kwargs):
+    if action != 'post_add' or not instance.pk:
+        return
+
+    subscribers = list(
+        instance.categories.all()
+        .values_list('subscribers__email', flat=True)
+        .exclude(subscribers__email='')
+        .distinct()
+    )
+
+    if not subscribers:
+        return
+
+    text_content = instance.preview()
     html_content = render_to_string(
         'news/post_created_email.html',
         {
-            'text': preview,
-            'link': f'{settings.SITE_URL}/{pk}'
-        }
+            'text': text_content,
+            'link': f'{settings.SITE_URL}{instance.get_absolute_url()}',
+        },
     )
 
-    msg = EmailMultiAlternatives(
-        subject=title,
-        body='',
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=subscribers,
+    new_post_notification_task.delay(
+        instance.title,
+        text_content,
+        html_content,
+        subscribers,
+        settings.DEFAULT_FROM_EMAIL,
     )
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-
-
-@receiver(m2m_changed, sender=PostCategory)
-def notify_about_new_post(sender, instance, action, **kwargs):
-    if action == 'post_add':
-        categories = instance.categories.all()
-        subscribers_emails = []
-
-        for cat in categories:
-            subscribers = cat.subscribers.all()
-            subscribers_emails += [s.email for s in subscribers]
-        subscribers_emails = list(set(subscribers_emails))
-
-        if subscribers_emails:
-            send_notifications(instance.preview(), instance.pk, instance.title, subscribers_emails)
