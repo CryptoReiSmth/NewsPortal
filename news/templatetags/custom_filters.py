@@ -13,7 +13,7 @@ def censor(value):
     text = value
     for word in BAD_WORDS:
         if word.lower() in text.lower():
-            replacement = word[0] + '*' * (len(word) - 1)
+            replacement = word[0] + "*" * (len(word)-2) + word[-1]
             text = text.replace(word, replacement)
 
     return text
